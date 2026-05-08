@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Alunos Pro</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+        }
+
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 2rem; }
+        
+        .card { background: white; padding: 2rem; border-radius: 1rem; shadow: 0 10px 15px -3px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border: 1px solid #e2e8f0; }
+        
+        h2 { color: #1e293b; margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+
+        .form-group { display: grid; gap: 0.5rem; margin-bottom: 1.5rem; }
+        input { padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 0.4rem; }
+        
+        button { background: var(--primary); color: white; border: none; padding: 0.7rem; border-radius: 0.4rem; cursor: pointer; font-weight: bold; }
+        button:hover { opacity: 0.9; }
+
+        .stats { margin-top: 2rem; }
+        .student-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f1f5f9; }
+        
+        .badge-aprovado { color: var(--success); font-weight: 600; }
+        .badge-reprovado { color: var(--danger); font-weight: 600; }
+        
+        .footer-total { margin-top: 1.5rem; background: #1e293b; color: white; padding: 1rem; border-radius: 0.5rem; text-align: center; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2> Alunos</h2>
+    
+    <!-- Entrada de Dados -->
+    <div class="form-group">
+        <input type="text" id="nome" placeholder="Nome do aluno">
+        <div style="display: flex; gap: 10px;">
+            <input type="number" id="n1" placeholder="Nota 1" step="0.1" min="0" max="10">
+            <input type="number" id="n2" placeholder="Nota 2" step="0.1" min="0" max="10">
+        </div>
+        <button onclick="adicionarAluno()">Adicionar Aluno</button>
+    </div>
+
+    <div id="relatorio"></div>
+</div>
+
+<script>
+    // 1. Estado Inicial (Array de Objetos)
+    let alunos = [
+        { nome: "Ana Silva", nota1: 8.5, nota2: 9.0 },
+        { nome: "Carlos Oliveira", nota1: 4.0, nota2: 5.5 },
+        { nome: "Beatriz Reis", nota1: 7.0, nota2: 7.5 },
+        { nome: "João Pedro", nota1: 5.0, nota2: 6.0 },
+        { nome: "Mariana Souza", nota1: 9.5, nota2: 10 }
+    ];
+
+    // 2. Função calcularMedia
+    const calcularMedia = (n1, n2) => (n1 + n2) / 2;
+
+    function atualizarInterface() {
+        // 3. MAP: Adiciona propriedade média
+        const alunosProcessados = alunos.map(a => ({
+            ...a,
+            media: calcularMedia(a.nota1, a.nota2)
+        }));
+
+        // 4. FILTER: Separa os grupos
+        const aprovados = alunosProcessados.filter(a => a.media >= 6);
+        const reprovados = alunosProcessados.filter(a => a.media < 6);
+
+        // 5. REDUCE: Cálculo da média geral
+        const somaMedias = alunosProcessados.reduce((acc, a) => acc + a.media, 0);
+        const mediaGeral = alunosProcessados.length ? (somaMedias / alunosProcessados.length) : 0;
+
+        // 6. Template Literals e Exibição
+        const relatorioHTML = `
+            <div class="stats">
+                <h3>✅ Aprovados (${aprovados.length})</h3>
+                ${aprovados.map(a => `
+                    <div class="student-item">
+                        <span>${a.nome}</span>
+                        <span class="badge-aprovado">${a.media.toFixed(1)}</span>
+                    </div>
+                `).join('')}
+
+                <h3 style="margin-top:1.5rem"> Reprovados (${reprovados.length})</h3>
+                ${reprovados.map(a => `
+                    <div class="student-item">
+                        <span>${a.nome}</span>
+                        <span class="badge-reprovado">${a.media.toFixed(1)}</span>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="footer-total">
+                Média Geral da Turma: <strong>${mediaGeral.toFixed(2)}</strong>
+            </div>
+        `;
+
+        document.getElementById('relatorio').innerHTML = relatorioHTML;
+        
+        // Log no console conforme solicitado
+        console.clear();
+        console.log("--- DADOS PROCESSADOS ---");
+        console.table(alunosProcessados);
+        console.log(`Média Geral: ${mediaGeral.toFixed(2)}`);
+    }
+
+    function adicionarAluno() {
+        const nome = document.getElementById('nome').value;
+        const n1 = parseFloat(document.getElementById('n1').value);
+        const n2 = parseFloat(document.getElementById('n2').value);
+
+        if (nome && !isNaN(n1) && !isNaN(n2)) {
+            alunos.push({ nome, nota1: n1, nota2: n2 });
+            atualizarInterface();
+            
+            // Limpar campos
+            document.getElementById('nome').value = '';
+            document.getElementById('n1').value = '';
+            document.getElementById('n2').value = '';
+        } else {
+            alert("Preencha todos os campos corretamente!");
+        }
+    }
+
+    // Inicializa a tela
+    atualizarInterface();
+</script>
+
+</body>
+</html>

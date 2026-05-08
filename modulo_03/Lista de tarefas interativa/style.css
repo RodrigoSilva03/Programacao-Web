@@ -1,0 +1,15 @@
+body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #eee; }
+.app { background: white; padding: 20px; border-radius: 8px; width: 350px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+#busca, #todo-form { margin-bottom: 15px; display: flex; gap: 5px; }
+#busca, #nova-tarefa { width: 100%; padding: 8px; }
+
+ul { list-style: none; padding: 0; }
+li { 
+    padding: 10px; border-bottom: 1px solid #ddd; 
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+}
+
+.concluida { text-decoration: line-through; color: #888; }
+.btn-remover { background: #ff4d4d; color: white; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; }
+.escondido { display: none !important; }
